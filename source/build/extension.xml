@@ -1,0 +1,16 @@
+<extension xmlns="http://ns.adobe.com/air/extension/3.1">
+    <id>com.turbidwater.geocapabilities</id>
+    <versionNumber>0.0.1</versionNumber>
+    <platforms>
+        <platform name="Android-ARM">
+            <applicationDeployment>
+                <nativeLibrary>GeoCapabilitiesAndroid.jar</nativeLibrary>
+				<initializer>com.turbidwater.geocapabilities.GeoCapabilities</initializer>
+            </applicationDeployment>
+        </platform>
+
+        <platform name="default">
+            <applicationDeployment/>
+        </platform>     
+    </platforms>
+</extension>
