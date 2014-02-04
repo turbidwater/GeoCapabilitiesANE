@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2014 RealEyes Media LLC. -->
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   applicationComplete="_onApplicationComplete(event)">
+	
+	<fx:Script>
+		<![CDATA[
+			import com.turbidwater.geocapabilities.GeoCapabilities;
+			
+			import mx.events.FlexEvent;
+			
+			public function checkStatus():void
+			{
+				gpsOn_lbl.text = "Is GPS On? " + GeoCapabilities.isGPSEnabled;
+				networkOn_lbl.text = "Is Network Location On? " + GeoCapabilities.isNetworkEnabled;
+			}
+			
+			private function _onApplicationComplete( event:FlexEvent ):void
+			{
+				checkStatus();
+			}
+			
+		]]>
+	</fx:Script>
+		
+	<s:VGroup paddingBottom="15" paddingLeft="15" paddingRight="15" paddingTop="15">
+		<s:Label id="gpsOn_lbl" text="Is GPS On?" />
+		<s:Label id="networkOn_lbl" text="Is Network Location On?" />
+		<s:Button id="check_btn" label="Check Status" click="checkStatus()" />
+	</s:VGroup>
+	
+</s:Application>
