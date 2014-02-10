@@ -7,6 +7,7 @@
 	<fx:Script>
 		<![CDATA[
 			import com.turbidwater.geocapabilities.GeoCapabilities;
+			import com.turbidwater.geocapabilities.events.GPSStatusChangeEvent;
 			
 			import mx.events.FlexEvent;
 			
@@ -19,6 +20,20 @@
 			private function _onApplicationComplete( event:FlexEvent ):void
 			{
 				checkStatus();
+				
+				var geo:GeoCapabilities = new GeoCapabilities();
+				geo.addEventListener( StatusEvent.STATUS, _onStatusEvent );
+				geo.addEventListener( GPSStatusChangeEvent.GPS_STATUS_CHANGED, _onGPSStatusEvent );
+			}
+			
+			private function _onStatusEvent( event:StatusEvent ):void
+			{
+				trace( 'test received status event ' + event.level );
+			}
+			
+			private function _onGPSStatusEvent( event:GPSStatusChangeEvent ):void
+			{
+				trace( 'GPS Status ' + event.status );
 			}
 			
 		]]>
