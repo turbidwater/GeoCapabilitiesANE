@@ -65,7 +65,7 @@
 				trace( 'GPS Status ' + event.status );
 				if( event.status == GPSStatus.GPS_STARTED || event.status == GPSStatus.GPS_STOPPED )
 				{
-					//checkStatus();
+					checkStatus();
 				}
 			}
 			

@@ -6,6 +6,11 @@ has been disabled in Settings > Location.
 
 This extension is Android only (with very limited desktop simulator support). There is no intention of supporting iOS.
 
+## Notes
+GPS status events are dispatched only after an application attempts to use the GPS. 
+GPS status events can also be dispatched when Network location providers (wi-fi & towers) are disabled or enabled
+Network status events will only be dispatched after calling startNetworkProviderMonitoring. Once you don't need it, make sure to call stopNetworkProviderMonitoring to prevent unnecessary battery drain
+Toggling location access for the Network is very noisy. Several events are dispatched while the user approves access. The last one is what matters.
 
 ## Projects
 * **GeoCapabilitiesLib**
