@@ -8,8 +8,12 @@ import com.adobe.fre.FREObject;
 import com.adobe.fre.FREWrongThreadException;
 import com.turbidwater.geocapabilities.GeoCapabilitiesContext;
 
-public class GPSEnabledFunction implements FREFunction {
+public class GPSEnabledFunction implements FREFunction 
+{
 
+	//-----------------------------------------------------------
+	//  CONTROL
+	//-----------------------------------------------------------
 	@Override
 	public FREObject call( FREContext context, FREObject[] args ) 
 	{

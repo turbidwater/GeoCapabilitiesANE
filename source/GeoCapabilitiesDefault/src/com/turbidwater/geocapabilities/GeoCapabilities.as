@@ -1,6 +1,6 @@
 package com.turbidwater.geocapabilities
 {
-	import com.turbidwater.geocapabilities.events.GPSStatusChangeEvent;
+	import com.turbidwater.geocapabilities.events.ProviderStatusChangeEvent;
 	
 	import flash.events.EventDispatcher;
 	import flash.events.StatusEvent;
@@ -23,6 +23,19 @@ package com.turbidwater.geocapabilities
 
 		
 		//-----------------------------------------------------------
+		//  CONTROL
+		//-----------------------------------------------------------
+		public function startNetworkProviderMonitoring():void
+		{
+			trace( 'start monitoring called' );
+		}
+		
+		public function stopNetworkProviderMonitoring():void
+		{
+			trace( 'stop monitoring called' );
+		}
+		
+		//-----------------------------------------------------------
 		//  EVENT HANDLERS
 		//-----------------------------------------------------------
 		protected function onStatus( event:StatusEvent ):void
@@ -31,9 +44,14 @@ package com.turbidwater.geocapabilities
 			
 			switch( event.code )
 			{
-				case GPSStatusChangeEvent.GPS_STATUS_CHANGED: 
+				case ProviderStatusChangeEvent.GPS_STATUS_CHANGED: 
 				{
-					dispatchEvent( new GPSStatusChangeEvent( GPSStatusChangeEvent.GPS_STATUS_CHANGED, int( event.level ) ) );
+					dispatchEvent( new ProviderStatusChangeEvent( ProviderStatusChangeEvent.GPS_STATUS_CHANGED, int( event.level ) ) );
+					break;
+				}
+				case ProviderStatusChangeEvent.NETWORK_STATUS_CHANGED: 
+				{
+					dispatchEvent( new ProviderStatusChangeEvent( ProviderStatusChangeEvent.NETWORK_STATUS_CHANGED, int( event.level ) ) );
 					break;
 				}
 				default:

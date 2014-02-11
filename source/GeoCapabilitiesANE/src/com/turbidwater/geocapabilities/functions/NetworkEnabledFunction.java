@@ -8,8 +8,11 @@ import com.adobe.fre.FREObject;
 import com.adobe.fre.FREWrongThreadException;
 import com.turbidwater.geocapabilities.GeoCapabilitiesContext;
 
-public class NetworkEnabledFunction implements FREFunction {
-
+public class NetworkEnabledFunction implements FREFunction 
+{
+	//-----------------------------------------------------------
+	//  CONTROL
+	//-----------------------------------------------------------
 	@Override
 	public FREObject call( FREContext context, FREObject[] args ) 
 	{
