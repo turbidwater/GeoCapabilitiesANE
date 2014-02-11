@@ -2,6 +2,9 @@
 <flexLibProperties includeAllClasses="true" useMultiPlatformConfig="true" version="3">
   <includeClasses>
     <classEntry path="com.turbidwater.geocapabilities.GeoCapabilities"/>
+    <classEntry path="com.turbidwater.geocapabilities.events.ProviderStatusChangeEvent"/>
+    <classEntry path="com.turbidwater.geocapabilities.model.GPSStatus"/>
+    <classEntry path="com.turbidwater.geocapabilities.model.NetworkStatus"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>

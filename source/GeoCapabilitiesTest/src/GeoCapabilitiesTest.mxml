@@ -7,8 +7,18 @@
 	<fx:Script>
 		<![CDATA[
 			import com.turbidwater.geocapabilities.GeoCapabilities;
+			import com.turbidwater.geocapabilities.events.ProviderStatusChangeEvent;
+			import com.turbidwater.geocapabilities.model.GPSStatus;
+			import com.turbidwater.geocapabilities.model.NetworkStatus;
+			
+			import flash.sensors.Geolocation;
 			
 			import mx.events.FlexEvent;
+			
+			public var geo:GeoCapabilities;
+			public var airGeo:Geolocation;
+			
+			protected var monitoringNetwork:Boolean;
 			
 			public function checkStatus():void
 			{
@@ -16,9 +26,104 @@
 				networkOn_lbl.text = "Is Network Location On? " + GeoCapabilities.isNetworkEnabled;
 			}
 			
+			public function startGPSMonitoring():void
+			{
+				if( Geolocation.isSupported && !airGeo )
+				{
+					airGeo = new Geolocation();
+					airGeo.addEventListener( GeolocationEvent.UPDATE, _onGPSUpdate );
+					airGeo.setRequestedUpdateInterval( 20000 );
+				}
+			}
+			
+			public function stopGPSMonitoring():void
+			{
+				if( airGeo )
+				{
+					airGeo.removeEventListener( GeolocationEvent.UPDATE, _onGPSUpdate );
+					airGeo = null;
+				}
+			}
+			
 			private function _onApplicationComplete( event:FlexEvent ):void
 			{
+				geo = new GeoCapabilities();
+				geo.addEventListener( StatusEvent.STATUS, _onStatusEvent );
+				geo.addEventListener( ProviderStatusChangeEvent.GPS_STATUS_CHANGED, _onGPSStatusEvent );
+				geo.addEventListener( ProviderStatusChangeEvent.NETWORK_STATUS_CHANGED, _onNetworkStatusEvent );
+				
 				checkStatus();
+			}
+			
+			private function _onStatusEvent( event:StatusEvent ):void
+			{
+				trace( 'test received status event ' + event.level );
+			}
+			
+			private function _onGPSStatusEvent( event:ProviderStatusChangeEvent ):void
+			{
+				trace( 'GPS Status ' + event.status );
+				if( event.status == GPSStatus.GPS_STARTED || event.status == GPSStatus.GPS_STOPPED )
+				{
+					checkStatus();
+				}
+			}
+			
+			private function _onNetworkStatusEvent( event:ProviderStatusChangeEvent ):void
+			{
+				trace( 'Network Status ' + event.status );
+				if( event.status == NetworkStatus.AVAILABLE || event.status == NetworkStatus.ENABLED || 
+					event.status == NetworkStatus.OUT_OF_SERVICE || event.status == NetworkStatus.DISABLED )
+				{
+					checkStatus();
+				}
+			}
+			
+			private function _onGPSUpdate( event:GeolocationEvent ):void
+			{
+				
+			}
+			
+			private function _onGPSToggle( event:MouseEvent ):void
+			{
+				if( !airGeo )
+				{
+					startGPSMonitoring();
+					gps_btn.label = "Stop GPS Monitoring";
+				}
+				else
+				{
+					stopGPSMonitoring();
+					gps_btn.label = "Start GPS Monitoring";
+				}
+			}
+			
+			private function _onNetworkToggle( event:MouseEvent ):void
+			{
+				if( !monitoringNetwork )
+				{
+					geo.startNetworkProviderMonitoring();
+					network_btn.label = "Stop Network Monitoring";
+				}
+				else
+				{
+					geo.stopNetworkProviderMonitoring();
+					network_btn.label = "Start Network Monitoring";
+				}
+				
+				monitoringNetwork = !monitoringNetwork;
+			}
+			
+			private function _onGetLastTimeToFix( event:MouseEvent ):void
+			{
+				var lastTimeToFix:int = geo.timeToFirstFix;
+				var seconds:String = lastTimeToFix.toString();
+				if( lastTimeToFix > 0 )
+				{
+					seconds = Math.round( lastTimeToFix/1000 ).toString();
+				}
+				
+				lastFix_btn.label = "Last Time: " + seconds + "s";
 			}
 			
 		]]>
@@ -28,6 +133,9 @@
 		<s:Label id="gpsOn_lbl" text="Is GPS On?" />
 		<s:Label id="networkOn_lbl" text="Is Network Location On?" />
 		<s:Button id="check_btn" label="Check Status" click="checkStatus()" />
+		<s:Button id="gps_btn" label="Start GPS Monitoring" click="_onGPSToggle( event )" />
+		<s:Button id="network_btn" label="Start Network Monitoring" click="_onNetworkToggle( event )" />
+		<s:Button id="lastFix_btn" label="Get Last Time to Fix" click="_onGetLastTimeToFix( event )" />
 	</s:VGroup>
 	
 </s:Application>

@@ -1,8 +1,12 @@
 package com.turbidwater.geocapabilities
 {
+	import com.turbidwater.geocapabilities.events.ProviderStatusChangeEvent;
+	
+	import flash.events.EventDispatcher;
+	import flash.events.StatusEvent;
 	import flash.sensors.Geolocation;
 
-	public class GeoCapabilities
+	public class GeoCapabilities extends EventDispatcher
 	{
 		//-----------------------------------------------------------
 		//  DECLARATIONS
@@ -14,9 +18,49 @@ package com.turbidwater.geocapabilities
 		//-----------------------------------------------------------
 		public function GeoCapabilities()
 		{
-			throw( new Error( "Don't instantiate GeoCapabilities" ) );
+			super();			
 		}
 
+		
+		//-----------------------------------------------------------
+		//  CONTROL
+		//-----------------------------------------------------------
+		public function startNetworkProviderMonitoring():void
+		{
+			trace( 'start monitoring called' );
+		}
+		
+		public function stopNetworkProviderMonitoring():void
+		{
+			trace( 'stop monitoring called' );
+		}
+		
+		//-----------------------------------------------------------
+		//  EVENT HANDLERS
+		//-----------------------------------------------------------
+		protected function onStatus( event:StatusEvent ):void
+		{
+			trace( 'Status Event ' + event.code + ', ' + event.level );
+			
+			switch( event.code )
+			{
+				case ProviderStatusChangeEvent.GPS_STATUS_CHANGED: 
+				{
+					dispatchEvent( new ProviderStatusChangeEvent( ProviderStatusChangeEvent.GPS_STATUS_CHANGED, int( event.level ) ) );
+					break;
+				}
+				case ProviderStatusChangeEvent.NETWORK_STATUS_CHANGED: 
+				{
+					dispatchEvent( new ProviderStatusChangeEvent( ProviderStatusChangeEvent.NETWORK_STATUS_CHANGED, int( event.level ) ) );
+					break;
+				}
+				default:
+				{
+					dispatchEvent( event );
+				}
+			}
+		}
+		
 		
 		//-----------------------------------------------------------
 		//  GETTERS/SETTERS
