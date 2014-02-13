@@ -3,6 +3,8 @@ package com.turbidwater.geocapabilities;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.app.PendingIntent;
+import android.content.Context;
 import android.location.GpsStatus.Listener;
 import android.location.GpsStatus;
 import android.location.Location;
@@ -17,33 +19,37 @@ import com.turbidwater.geocapabilities.functions.GPSEnabledFunction;
 import com.turbidwater.geocapabilities.functions.GetTimeToFirstFixFunction;
 import com.turbidwater.geocapabilities.functions.InitFunction;
 import com.turbidwater.geocapabilities.functions.NetworkEnabledFunction;
+import com.turbidwater.geocapabilities.functions.SetProximityAlertFunction;
 import com.turbidwater.geocapabilities.functions.StartNetworkProviderMonitoringFunction;
 import com.turbidwater.geocapabilities.functions.StopNetworkProviderMonitoringFunction;
+import com.turbidwater.geocapabilities.receivers.ProximityAlertReceiver;
 
 public class GeoCapabilitiesContext extends FREContext implements Listener, LocationListener 
 {
 	//-----------------------------------------------------------
 	//  DECLARATIONS
 	//-----------------------------------------------------------
+	public static final String PROXIMITY_ALERT = "com.turbidwater.geocapabilities.PROXIMITY_ALERT";
 	private final static String TAG = "GeoCapabilities"; 
+	
 	public LocationManager locationManager; 
 	public GpsStatus gpsStatus;
+	public Context appContext;
+	public Map<String, PendingIntent> pendingIntentMap;
 	
 	public Boolean listening = false;
+	public ProximityAlertReceiver proximityAlertReceiver;
 	
 	
 	//-----------------------------------------------------------
 	//  INIT METHODS
 	//-----------------------------------------------------------
-	public void initializeGeoCapabilitiesContext() 
-	{
-		Log.d( TAG, "Initting context now" );
-		Log.d( TAG, "Seriously" );
-	}
-
 	@Override
 	public void dispose() 
 	{
+		//Clean up broadcast receivers
+		appContext.unregisterReceiver( proximityAlertReceiver );
+		
 		//Clean up location manager
 		locationManager.removeGpsStatusListener( this );
 		if( listening )
@@ -68,6 +74,7 @@ public class GeoCapabilitiesContext extends FREContext implements Listener, Loca
 	    functions.put( "startMonitoringNetworkProvider", new StartNetworkProviderMonitoringFunction() );
 	    functions.put( "stopMonitoringNetworkProvider", new StopNetworkProviderMonitoringFunction() );
 	    functions.put( "getTimeToFirstFix", new GetTimeToFirstFixFunction() );
+	    functions.put( "addProximityAlert", new SetProximityAlertFunction() );
 	    
 	    return functions;
 	}

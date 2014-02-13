@@ -1,6 +1,8 @@
 package com.turbidwater.geocapabilities
 {
 	import com.turbidwater.geocapabilities.events.ProviderStatusChangeEvent;
+	import com.turbidwater.geocapabilities.events.ProximityAlertEvent;
+	import com.turbidwater.geocapabilities.model.GPSStatus;
 	
 	import flash.events.EventDispatcher;
 	import flash.events.StatusEvent;
@@ -35,6 +37,16 @@ package com.turbidwater.geocapabilities
 			trace( 'stop monitoring called' );
 		}
 		
+		public function addProximityAlert( lat:Number, long:Number, radius:Number, expiration:int ):void
+		{
+			trace( 'addProximityAlert' );
+			if( expiration < 0 || expiration > 24 * 60 * 60 * 1000 )
+			{
+				throw( new Error( 'Expiration cannot be eternal or longer than a day' ) );
+			}
+		}
+		
+		
 		//-----------------------------------------------------------
 		//  EVENT HANDLERS
 		//-----------------------------------------------------------
@@ -46,7 +58,11 @@ package com.turbidwater.geocapabilities
 			{
 				case ProviderStatusChangeEvent.GPS_STATUS_CHANGED: 
 				{
-					dispatchEvent( new ProviderStatusChangeEvent( ProviderStatusChangeEvent.GPS_STATUS_CHANGED, int( event.level ) ) );
+					//Weed out the overwhelming flood of useless status events
+					if( int( event.level ) != GPSStatus.GPS_STATUS )
+					{
+						dispatchEvent( new ProviderStatusChangeEvent( ProviderStatusChangeEvent.GPS_STATUS_CHANGED, int( event.level ) ) );
+					}
 					break;
 				}
 				case ProviderStatusChangeEvent.NETWORK_STATUS_CHANGED: 
@@ -54,6 +70,12 @@ package com.turbidwater.geocapabilities
 					dispatchEvent( new ProviderStatusChangeEvent( ProviderStatusChangeEvent.NETWORK_STATUS_CHANGED, int( event.level ) ) );
 					break;
 				}
+				case ProximityAlertEvent.PROXIMITY_ALERT: 
+				{
+					var latLong:Array = event.level.split( "," );
+					dispatchEvent( new ProximityAlertEvent( ProximityAlertEvent.PROXIMITY_ALERT, Number( latLong[0] ), Number( latLong[1] ) ) );
+						break;
+					}
 				default:
 				{
 					dispatchEvent( event );

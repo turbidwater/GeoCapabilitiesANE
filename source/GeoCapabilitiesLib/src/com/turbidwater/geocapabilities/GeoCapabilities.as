@@ -2,6 +2,7 @@ package com.turbidwater.geocapabilities
 {
 	
 	import com.turbidwater.geocapabilities.events.ProviderStatusChangeEvent;
+	import com.turbidwater.geocapabilities.events.ProximityAlertEvent;
 	import com.turbidwater.geocapabilities.model.GPSStatus;
 	
 	import flash.events.EventDispatcher;
@@ -42,13 +43,31 @@ package com.turbidwater.geocapabilities
 			extensionContext.call( 'stopMonitoringNetworkProvider' );
 		}
 		
+		/**
+		 * Adds a proximity alert using the LocationManager.addProximityAlert method in Java. It is
+		 * intentionally limited in its range to avoid performance issues from unlimited alerts
+		 * 
+		 * @param	lat (Number) latitude of point to trigger alert
+		 * @param	long (Number) longitude of point to trigger alert
+		 * @param	radius (Number) how close to the point to get before triggering alert
+		 * @param	expiration (int) the number of milliseconds for this watch to last
+		 * @return	void
+		 */
+		public function addProximityAlert( lat:Number, long:Number, radius:Number, expiration:int ):void
+		{
+			if( expiration < 0 || expiration > 24 * 60 * 60 * 1000 )
+			{
+				throw( new Error( 'For performance concerns, expiration cannot be eternal or longer than a day' ) );
+			}
+			extensionContext.call( 'addProximityAlert', lat, long, radius, expiration );
+		}
+		
 		
 		//-----------------------------------------------------------
 		//  EVENT HANDLERS
 		//-----------------------------------------------------------
 		protected function onStatus( event:StatusEvent ):void
 		{
-			
 			switch( event.code )
 			{
 				case ProviderStatusChangeEvent.GPS_STATUS_CHANGED: 
@@ -63,6 +82,12 @@ package com.turbidwater.geocapabilities
 				case ProviderStatusChangeEvent.NETWORK_STATUS_CHANGED: 
 				{
 					dispatchEvent( new ProviderStatusChangeEvent( ProviderStatusChangeEvent.NETWORK_STATUS_CHANGED, int( event.level ) ) );
+					break;
+				}
+				case ProximityAlertEvent.PROXIMITY_ALERT: 
+				{
+					var latLong:Array = event.level.split( "," );
+					dispatchEvent( new ProximityAlertEvent( ProximityAlertEvent.PROXIMITY_ALERT, Number( latLong[0] ), Number( latLong[1] ) ) );
 					break;
 				}
 				default:

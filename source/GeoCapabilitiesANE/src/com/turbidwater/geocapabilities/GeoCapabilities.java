@@ -6,7 +6,7 @@ import android.util.Log;
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREExtension;
 
-public class GeoCapabilities implements FREExtension 
+public class GeoCapabilities implements FREExtension
 {
 	//-----------------------------------------------------------
 	//  DECLARATIONS
@@ -24,7 +24,6 @@ public class GeoCapabilities implements FREExtension
 	{
 		Log.d( TAG, "GeoCapabilitiesContext being created" );
 		geoContext = new GeoCapabilitiesContext();
-		geoContext.initializeGeoCapabilitiesContext();
 		return geoContext;
 	}
 

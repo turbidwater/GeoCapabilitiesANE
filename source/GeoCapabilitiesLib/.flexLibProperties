@@ -5,6 +5,7 @@
     <classEntry path="com.turbidwater.geocapabilities.events.ProviderStatusChangeEvent"/>
     <classEntry path="com.turbidwater.geocapabilities.model.GPSStatus"/>
     <classEntry path="com.turbidwater.geocapabilities.model.NetworkStatus"/>
+    <classEntry path="com.turbidwater.geocapabilities.events.ProximityAlertEvent"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>

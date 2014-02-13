@@ -8,6 +8,7 @@
 		<![CDATA[
 			import com.turbidwater.geocapabilities.GeoCapabilities;
 			import com.turbidwater.geocapabilities.events.ProviderStatusChangeEvent;
+			import com.turbidwater.geocapabilities.events.ProximityAlertEvent;
 			import com.turbidwater.geocapabilities.model.GPSStatus;
 			import com.turbidwater.geocapabilities.model.NetworkStatus;
 			
@@ -51,6 +52,7 @@
 				geo.addEventListener( StatusEvent.STATUS, _onStatusEvent );
 				geo.addEventListener( ProviderStatusChangeEvent.GPS_STATUS_CHANGED, _onGPSStatusEvent );
 				geo.addEventListener( ProviderStatusChangeEvent.NETWORK_STATUS_CHANGED, _onNetworkStatusEvent );
+				geo.addEventListener( ProximityAlertEvent.PROXIMITY_ALERT, _onProximityAlert );
 				
 				checkStatus();
 			}
@@ -66,7 +68,16 @@
 				if( event.status == GPSStatus.GPS_STARTED || event.status == GPSStatus.GPS_STOPPED )
 				{
 					checkStatus();
+					if( event.status == GPSStatus.GPS_STOPPED )
+					{
+						gotFix_lbl.visible = false;
+					}
 				}
+				else if( event.status == GPSStatus.GPS_FIRST_FIX )
+				{
+					gotFix_lbl.visible = true;
+				}
+				
 			}
 			
 			private function _onNetworkStatusEvent( event:ProviderStatusChangeEvent ):void
@@ -77,6 +88,11 @@
 				{
 					checkStatus();
 				}
+			}
+			
+			private function _onProximityAlert( event:ProximityAlertEvent ):void
+			{
+				proximityAlert_lbl.text = "Arrived at " + event.lat + ' ' + event.long;
 			}
 			
 			private function _onGPSUpdate( event:GeolocationEvent ):void
@@ -126,6 +142,11 @@
 				lastFix_btn.label = "Last Time: " + seconds + "s";
 			}
 			
+			private function _onSetProximityAlert( event:MouseEvent ):void
+			{
+				geo.addProximityAlert( Number( lat_ti.text ), Number( long_ti.text ), Number( radius_ti.text ), int( expiration_ti.text ) * 1000 );
+			}
+			
 		]]>
 	</fx:Script>
 		
@@ -135,7 +156,28 @@
 		<s:Button id="check_btn" label="Check Status" click="checkStatus()" />
 		<s:Button id="gps_btn" label="Start GPS Monitoring" click="_onGPSToggle( event )" />
 		<s:Button id="network_btn" label="Start Network Monitoring" click="_onNetworkToggle( event )" />
-		<s:Button id="lastFix_btn" label="Get Last Time to Fix" click="_onGetLastTimeToFix( event )" />
+		<s:HGroup verticalAlign="middle">
+			<s:Button id="lastFix_btn" label="Get Last Time to Fix" click="_onGetLastTimeToFix( event )" />
+			<s:Label id="gotFix_lbl" text="Got GPS fix!" visible="false" />
+		</s:HGroup>
+		<s:HGroup verticalAlign="middle">
+			<s:Label text="Lat: "/>
+			<s:TextInput id="lat_ti" width="320" text="39.739518" />
+		</s:HGroup>
+		<s:HGroup verticalAlign="middle">
+			<s:Label text="Long: "/>
+			<s:TextInput id="long_ti" width="320" text="-104.985612" />
+		</s:HGroup>
+		<s:HGroup verticalAlign="middle">
+			<s:Label text="Radius (Meters): "/>
+			<s:TextInput id="radius_ti" width="320" text="15" />
+		</s:HGroup>
+		<s:HGroup verticalAlign="middle">
+			<s:Label text="Expiration (Seconds): "/>
+			<s:TextInput id="expiration_ti" width="320" text="300" />
+		</s:HGroup>
+		<s:Button id="setProximityAlert_btn" label="Set Proximity Alert" click="_onSetProximityAlert( event )" />
+		<s:Label id="proximityAlert_lbl" text="" />
 	</s:VGroup>
 	
 </s:Application>
