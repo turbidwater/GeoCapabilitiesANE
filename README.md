@@ -4,6 +4,9 @@ has been denied to location information. GeoCapabilities tells whether GPS is tu
 in Airplane Mode does NOT disabled network location detection as far as the Android LocationManager API is concerned. It only tells if location data via wi-fi or network
 has been disabled in Settings > Location.
 
+It allows you to listen for status events from location providers, tell how long it took to get the first GPS fix, and also to use the addProximityAlert method of the
+Android API to listen for an event when you are within a certain radius of a given point.
+
 This extension is Android only (with very limited desktop simulator support). There is no intention of supporting iOS.
 
 ## Notes
